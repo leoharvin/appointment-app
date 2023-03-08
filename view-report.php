@@ -6,56 +6,7 @@ if(!Login::isLoggedIn()){
     header('location:./login.php');
 }
 
-$slots = array(0 => array('slot'=>"10 AM", 0 => "10 AM"), 
-1 => array('slot'=>"11 AM", 0 => "11 AM"), 
-2 => array('slot'=>"12 PM", 0 => "12 PM"), 
-3 => array('slot'=>"02 PM", 0 => "02 PM"), 
-4 => array('slot'=>"03 PM", 0 => "03 PM"), 
-5 => array('slot'=>"04 PM", 0 => "04 PM"));
-
-$booked_slots = DB::query("SELECT slot FROM bookings WHERE date = CURDATE()");
-$result = check_diff_multi($slots, $booked_slots);
-$slots = $result;
-//die(var_dump($slot, $result));
-
-$modal = null;
-if(isset($_POST['submit'])){
-    if($_POST['pname'] == '' || $_POST['slot'] == ''){
-        die('invalid entry');
-    }
-
-    $pname = $_POST['pname'];
-    $slot = $_POST['slot'];
-
-    if(DB::query('SELECT id FROM bookings WHERE date=CURDATE() AND slot=:slot', array(':slot' => $slot))){
-        die('Slot unavailable');
-    }
-
-    DB::query("INSERT INTO bookings (name, user_id, slot, date) VALUES (:name, :uid, :slot, NOW())", array(":name"=>$pname, ":uid" => Login::isLoggedIn(), ":slot"=> $slot));
-    $modal = '<div class="alert alert-success" role="alert">
-    Successfully added booking
-  </div>';
-
-    header('location:./appointments.php');
-
-}
-
-function check_diff_multi($array1, $array2){
-    $result = array();
-    foreach($array1 as $key => $val) {
-         if(isset($array2[$key])){
-           if(is_array($val) && $array2[$key]){
-               $result[$key] = check_diff_multi($val, $array2[$key]);
-           }
-       } else {
-           $result[$key] = $val;
-       }
-    }
-
-    return $result;
-}
-
-//die(var_dump($slots));
+$dates = DB::query("SELECT DISTINCT date FROM bookings")
 
 ?>
 
@@ -198,7 +149,7 @@ function check_diff_multi($array1, $array2){
                         <li>
                             <a href="index.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
-						<li>
+						<li class="active">
                             <a href="view-report.php"><i class="fa fa-file"></i> <span>Report</span></a>
                         </li>
                         <li>
@@ -225,16 +176,11 @@ function check_diff_multi($array1, $array2){
             <div class="content">
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <h4 class="page-title">Add Appointment</h4>
+                        <h4 class="page-title">View Booking Data</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <?php 
-                            if($modal){
-                                echo $modal;
-                            }
-                        ?>
                         <form method="post" action="./add-appointment.php">
                             <div class="row">
                                 <!-- <div class="col-md-6">
@@ -244,29 +190,23 @@ function check_diff_multi($array1, $array2){
 									</div>
                                 </div> -->
                                 <div class="col-md-6">
-									<div class="form-group">
-										<label>Name</label>
-                                        <input type="text" placeholder="Enter name" name="pname" id="pname" class="form-control">
-										<!-- <select class="select">
-											<option>Select</option>
-											<option>Jennifer Robinson</option>
-											<option>Terry Baker</option>
-										</select> -->
-									</div>
-                                    
-                                </div>
-                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Slot</label>
-                                        <select name="slot" class="select">
+                                        <label>Choose Report Date</label>
+                                        <select name="date" id="date" class="select">
 											<option value="null">Select</option>
 											<?php 
-                                                foreach($slots as $slot){
-                                                    if($slot['slot'] != '')
-                                                        echo '<option value="'.$slot['slot'].'">'.$slot['slot'].'</option>';
+                                                foreach($dates as $d){
+                                                    echo '<option value="'.$d['date'].'">'.$d['date'].'</option>';
                                                 }
+
                                             ?>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div style="margin-top: 2rem;">
+                                        <b>OR</b>
+                                        <button id="overall" class="btn btn-info ml-3">Overall Report</button>
                                     </div>
                                 </div>
                             </div>
@@ -339,7 +279,7 @@ function check_diff_multi($array1, $array2){
 								</div>
                             </div> -->
                             <div class="m-t-20 text-center">
-                                <button type="submit" name="submit" class="btn btn-primary submit-btn">Create Appointment</button>
+                                <button id="submit" class="btn btn-primary submit-btn">Generate PDF</button>
                             </div>
                         </form>
                     </div>
@@ -570,8 +510,21 @@ function check_diff_multi($array1, $array2){
             $(function () {
                 $('#datetimepicker3').datetimepicker({
                     format: 'LT'
-
                 });
+                $('#overall').click(function(e){
+                    e.preventDefault()
+                    window.open('./report.php', '_blank');
+                });
+                $('#submit').click(function(e){
+                    e.preventDefault()
+                    let date = $('#date').val()
+                    if(date == "null"){
+                        alert('Please select a date to generate report')
+                    }
+                    else{
+                        window.open('./report.php?date='+date, '_blank');
+                    }
+                }) 
             });
      </script>
 </body>

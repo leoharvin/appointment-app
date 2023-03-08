@@ -112,7 +112,9 @@ $remaining = $total - $booked;
                         <li class="active">
                             <a href="index.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
-						
+						<li>
+                            <a href="view-report.php"><i class="fa fa-file"></i> <span>Report</span></a>
+                        </li>
                         <li>
                             <a href="appointments.php"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
@@ -198,7 +200,7 @@ $remaining = $total - $booked;
                                             foreach($bookings as $booking){
                                                 echo '<tr>
 												<td style="min-width: 200px;">
-													<a class="avatar" href="profile.html">'.$booking['name'].'</a>
+													<a class="avatar" href="profile.html">'.substr($booking['name'], 0, 2).'</a>
 													<h2><a href="profile.html">'.$booking['name'].'</a></h2>
 												</td>                 
 												<td>

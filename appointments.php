@@ -118,18 +118,13 @@ $bookings = DB::query("SELECT * FROM bookings");
                         <li>
                             <a href="index.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
-						
+						<li>
+                            <a href="view-report.php"><i class="fa fa-file"></i> <span>Report</span></a>
+                        </li>
                         <li class="active">
                             <a href="appointments.php"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
-                      
-                       
-					
-                       
-                       
-                        <!-- <li>
-                            <a href="calendar.html"><i class="fa fa-calendar"></i> <span>Calendar</span></a>
-                        </li> -->
+                        
                         <!-- <li class="menu-title">Extras</li>
                         <li class="submenu">
                             <a href="#"><i class="fa fa-columns"></i> <span>Pages</span> <span class="menu-arrow"></span></a>
@@ -139,8 +134,6 @@ $bookings = DB::query("SELECT * FROM bookings");
                                 <li><a href="forgot-password.html"> Forgot Password </a></li>
                                 <li><a href="change-password2.html"> Change Password </a></li>
                                 <li><a href="lock-screen.html"> Lock Screen </a></li>
-                                <li><a href="profile.html"> Profile </a></li>
-                             
                             </ul>
                         </li> -->
                        
